@@ -1,10 +1,10 @@
-class disjoint {
+class dsu {
 private:
 	vector<int> par;
 	vector<int> sz;
 
 public:
-	disjoint(int n_) : par(n_), sz(n_, 1) {
+	dsu(int n_) : par(n_), sz(n_, 1) {
 		iota(par.begin(), par.end(), 0);
 	}
 
