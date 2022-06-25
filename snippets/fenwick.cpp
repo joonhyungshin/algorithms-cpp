@@ -15,7 +15,7 @@ public:
 
 	T get(int i) {
 		T res = 0;
-		for (int j = i; j; j -= j & -j) {
+		for (int j = i + 1; j; j -= j & -j) {
 			res += tree[j - 1];
 		}
 		return res;

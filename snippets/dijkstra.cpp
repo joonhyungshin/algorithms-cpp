@@ -1,7 +1,7 @@
 template<class T, class... Args>
 vector<T> dijkstra(const graph<T, Args...> &g, int root) {
 	vector<T> dist(g.n, numeric_limits<T>::max());
-	dist[root] = 0;
+	dist[root] = static_cast<T>(0);
 	priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> pq;
 	pq.emplace(dist[root], root);
 	while (!pq.empty()) {

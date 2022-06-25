@@ -2,7 +2,7 @@ template<class T, class... Args>
 vector<T> dijkstra(const graph<T, Args...> &g, int root) {
 	vector<T> dist(g.n, numeric_limits<T>::max());
 	vector<bool> vis(g.n);
-	dist[root] = 0;
+	dist[root] = static_cast<T>(0);
 	for (int i = 0; i < g.n - 1; i++) {
 		T min_d = numeric_limits<T>::max();
 		int node = -1;

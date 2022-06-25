@@ -7,7 +7,7 @@ public:
 
     digraph(int n_) : graph<T, Args...>(n_) {}
 
-    void add(int from, int to, T cost = 1) {
+    void add(int from, int to, T cost = static_cast<T>(1)) {
         g[from].push_back(static_cast<int>(edges.size()));
         edges.push_back({from, to, cost});
     }

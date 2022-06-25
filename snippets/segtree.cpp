@@ -44,7 +44,7 @@ public:
 		int y = (l + r) >> 1;
 		int z = x + ((y - l + 1) << 1);
 		tree[x].push(l, r, tree[x + 1], tree[z]);
-		node res{};
+		Node res{};
 		if (e <= y) {
 			res = get(x + 1, l, y, s, e);
 		} else {

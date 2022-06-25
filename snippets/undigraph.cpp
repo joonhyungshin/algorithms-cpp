@@ -7,7 +7,7 @@ public:
 
 	undigraph(int n_) : graph<T, Args...>(n_) {}
 
-	void add(int u, int v, T cost = 1) {
+	void add(int u, int v, T cost = static_cast<T>(1)) {
 		int idx = static_cast<int>(edges.size());
 		g[u].push_back(idx);
 		g[v].push_back(idx);

@@ -1,13 +1,13 @@
-template<class F, class Container = vector<int>, class... Args>
+template<class F, class T = int, class Container = vector<int>>
 class dinic {
 public:
-    flow_graph<F, Container, Args...> &g;
+    flow_graph<F, T, Container> &g;
     vector<int> dist;
     vector<int> q;
     vector<typename Container::iterator> state;
     int s, t;
 
-    dinic(flow_graph<F, Container, Args...> &g_) : g(g_), dist(g_.n), q(g_.n), state(g_.n) {}
+    dinic(flow_graph<F, T, Container> &g_) : g(g_), dist(g_.n), q(g_.n), state(g_.n) {}
 
     bool bfs() {
         fill(dist.begin(), dist.end(), -1);
@@ -46,13 +46,13 @@ public:
 	            }
             }
         }
-        return 0;
+        return static_cast<F>(0);
     }
 
     F run(int s_, int t_) {
         s = s_;
         t = t_;
-        F res = 0;
+        F res = static_cast<F>(0);
         while (bfs()) {
             for (int i = 0; i < g.n; i++) {
                 state[i] = g.g[i].begin();
@@ -60,7 +60,7 @@ public:
             while (true) {
             	F f = dfs(s, numeric_limits<F>::max());
             	res += f;
-            	if (f == 0) {
+            	if (f == static_cast<F>(0)) {
             		break;
             	}
             }
