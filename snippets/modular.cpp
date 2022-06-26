@@ -16,13 +16,13 @@ public:
     template<class V>
     static T norm(const V &x) {
         T val;
-        if (-mod() <= x && x < mod()) {
-            val = static_cast<T>(x);
+        if (x >= static_cast<V>(0)) {
+            val = static_cast<T>(x < mod() ? x : x % mod());
         } else {
-            val = static_cast<T>(x % mod());
-        }
-        if (val < static_cast<T>(0)) {
-            val += mod();
+            val = static_cast<T>(-x <= mod() ? x : x % mod());
+            if (val < static_cast<T>(0)) {
+                val += mod();
+            }
         }
         return val;
     }
@@ -36,15 +36,19 @@ public:
     }
 
     modular &operator+=(const modular &other) {
-        if ((value += other.value) >= mod()) {
-            value -= mod();
+        if (value < mod() - other.value) {
+            value += other.value;
+        } else {
+            value -= mod() - other.value;
         }
         return *this;
     }
 
     modular &operator-=(const modular &other) {
-        if ((value -= other.value) < static_cast<T>(0)) {
-            value += mod();
+        if (value >= other.value) {
+            value -= other.value;
+        } else {
+            value += mod() - other.value;
         }
         return *this;
     }
@@ -62,9 +66,9 @@ public:
         return *this;
     }
 
-    modular &operator/=(const modular &other) {
+    modular inverse() const {
         T u = static_cast<T>(0), v = static_cast<T>(1);
-        T a = other.value, m = mod();
+        T a = value, m = mod();
         while (a != static_cast<T>(0)) {
             T t = m / a;
             m -= t * a;
@@ -73,7 +77,11 @@ public:
             swap(u, v);
         }
         assert(m == 1);
-        return *this *= modular(u);
+        return modular(u);
+    }
+
+    modular &operator/=(const modular &other) {
+        return *this *= other.inverse();
     }
 
     modular operator+(const modular &other) const {
@@ -102,17 +110,18 @@ public:
 
     template<class V>
     modular pow(const V &b) {
-        bool inv = b < 0;
-        modular x(*this), res(1);
+        bool inv = b < static_cast<V>(0);
+        modular res(static_cast<T>(1));
+        modular x(inv ? inverse() : *this);
         V p = inv ? -b : b;
-        while (p > 0) {
+        while (p > static_cast<V>(0)) {
             if (p & 1) {
                 res *= x;
             }
             x *= x;
             p >>= 1;
         }
-        return inv ? modular(1) / res : res;
+        return res;
     }
 
     template<class V> modular &operator+=(const V &other) { return *this += modular(other); }
@@ -134,12 +143,12 @@ public:
     friend istream &operator>>(istream &stream, modular<W> &n);
 };
 
-template<class V, class W> modular<W> operator+(const V &lhs, const modular<W> &rhs) { return modular(lhs) + rhs; }
-template<class V, class W> modular<W> operator-(const V &lhs, const modular<W> &rhs) { return modular(lhs) - rhs; }
-template<class V, class W> modular<W> operator*(const V &lhs, const modular<W> &rhs) { return modular(lhs) * rhs; }
-template<class V, class W> modular<W> operator/(const V &lhs, const modular<W> &rhs) { return modular(lhs) / rhs; }
-template<class V, class W> bool operator==(const V &lhs, const modular<W> &rhs) { return modular(lhs) == rhs; }
-template<class V, class W> bool operator!=(const V &lhs, const modular<W> &rhs) { return modular(lhs) != rhs; }
+template<class V, class W> modular<W> operator+(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) + rhs; }
+template<class V, class W> modular<W> operator-(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) - rhs; }
+template<class V, class W> modular<W> operator*(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) * rhs; }
+template<class V, class W> modular<W> operator/(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) / rhs; }
+template<class V, class W> bool operator==(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) == rhs; }
+template<class V, class W> bool operator!=(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) != rhs; }
 
 template<class W>
 ostream &operator<<(ostream &stream, const modular<W> &n) {
