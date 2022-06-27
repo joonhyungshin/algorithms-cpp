@@ -9,12 +9,22 @@ public:
     int s, t;
 
     push_relabel(flow_graph<F, T, Args...> &g_, int gp_ = 4) : g(g_),
-        extra(g_.n),
-        hei(g_.n), arc(g_.n),
-        prv(g_.n * 3), nxt(g_.n * 3),
-        act(g_.n * 2), bot(g_.n), q(),
+        extra(),
+        hei(), arc(),
+        prv(), nxt(),
+        act(), bot(), q(),
         gp(gp_)
     {}
+
+    void init() {
+        extra.resize(g.n);
+        hei.resize(g.n);
+        arc.resize(g.n);
+        prv.resize(g.n * 3);
+        nxt.resize(g.n * 3);
+        act.resize(g.n * 2);
+        bot.resize(g.n);
+    }
 
     void relabel(int v, int h) {
         prv[nxt[prv[v]] = nxt[v]] = prv[v];
@@ -108,6 +118,7 @@ public:
     F run(int s_, int t_) {
         s = s_;
         t = t_;
+        init();
         fill(extra.begin(), extra.end(), 0);
         fill(arc.begin(), arc.end(), 0);
         for (int idx : g.g[s]) {
