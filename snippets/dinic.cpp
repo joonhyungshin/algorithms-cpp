@@ -7,7 +7,13 @@ public:
     vector<typename Container::iterator> state;
     int s, t;
 
-    dinic(flow_graph<F, T, Container> &g_) : g(g_), dist(g_.n), q(g_.n), state(g_.n) {}
+    dinic(flow_graph<F, T, Container> &g_) : g(g_), dist(), q(), state() {}
+
+    void init() {
+        dist.resize(g.n);
+        q.resize(g.n);
+        state.resize(g.n);
+    }
 
     bool bfs() {
         fill(dist.begin(), dist.end(), -1);
@@ -52,6 +58,7 @@ public:
     F run(int s_, int t_) {
         s = s_;
         t = t_;
+        init();
         F res = static_cast<F>(0);
         while (bfs()) {
             for (int i = 0; i < g.n; i++) {

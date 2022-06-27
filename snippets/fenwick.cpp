@@ -5,7 +5,7 @@ private:
 	vector<T> tree;
 
 public:
-	fenwick(int n_) : n(n_), tree(n_, 0) {}
+	fenwick(int n_) : n(n_), tree(n_, T()) {}
 
 	void update(int i, T x) {
 		for (int j = i + 1; j <= n; j += j & -j) {

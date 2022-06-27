@@ -8,13 +8,20 @@ public:
     vector<bool> inq;
     int s, t;
 
-    mcmf(flow_graph<F, T, Args...> &g_) : g(g_), dist(g_.n), bck(g_.n), q(), inq(g_.n) {}
+    mcmf(flow_graph<F, T, Args...> &g_) : g(g_), dist(), bck(), q(), inq() {}
+
+    void init() {
+        dist.resize(g.n);
+        bck.resize(g.n);
+        inq.resize(g.n);
+    }
 
     pair<F, T> run(int s_, int t_, bool only_max_flow = true,
                    const F flow_lb = numeric_limits<F>::min(),
                    const F flow_ub = numeric_limits<F>::max()) {
         s = s_;
         t = t_;
+        init();
         F max_flow = static_cast<F>(0);
         T min_cost = static_cast<T>(0);
         while (max_flow < flow_ub) {

@@ -1,62 +1,33 @@
+template<class String = string>
 class suffix_array {
 public:
-    int n;
-    vector<int> s;
+    using T = typename String::value_type;
+    String &s;
+    vector<int> s_int;
     vector<int> aux;
     vector<int> sa;
     vector<int> ptr;
     vector<int> lcp;
     int sigma;
 
-    suffix_array(const string &s_) : n(static_cast<int>(s_.size())),
-        s(n), aux(n), sa(n), ptr(), lcp() {
-        auto msc = numeric_limits<typename string::value_type>::min();
-        auto mxc = numeric_limits<typename string::value_type>::max();
+    suffix_array(String &s_) : s(s_), s_int(), aux(), sa(), ptr(), lcp() {}
+
+    void init(const T &msc, const T &mxc) {
+        int n = static_cast<int>(s.size());
+        s_int.resize(n);
+        aux.resize(n);
+        sa.resize(n);
         vector<int> ch(mxc - msc + 1);
         for (int i = 0; i < n; i++) {
-            ch[s_[i] - msc] = 1;
+            ch[s[i] - msc] = 1;
         }
-        for (int i = 1; i <= mxc - msc; i++) {
+        for (int i = 1; i <= static_cast<int>(mxc - msc); i++) {
             ch[i] += ch[i - 1];
         }
         for (int i = 0; i < n; i++) {
-            s[i] = ch[s_[i] - msc] - 1;
+            s_int[i] = ch[s[i] - msc] - 1;
         }
         sigma = ch[mxc - msc];
-    }
-
-    suffix_array(const char *s_, size_t n_) : n(static_cast<int>(n_)),
-        s(n), aux(n), sa(n), ptr(), lcp() {
-        auto msc = numeric_limits<char>::min();
-        auto mxc = numeric_limits<char>::max();
-        vector<int> ch(mxc - msc + 1);
-        for (int i = 0; i < n; i++) {
-            ch[s_[i] - msc] = 1;
-        }
-        for (int i = 1; i <= mxc - msc; i++) {
-            ch[i] += ch[i - 1];
-        }
-        for (int i = 0; i < n; i++) {
-            s[i] = ch[s_[i] - msc] - 1;
-        }
-        sigma = ch[mxc - msc];
-    }
-
-    template<class Container>
-    suffix_array(const Container &v) : n(static_cast<int>(v.size())),
-        s(n), aux(n), sa(n), ptr(), lcp() {
-        int n = static_cast<int>(v.size());
-        vector<int> ch(n + 1);
-        for (int i = 0; i < n; i++) {
-            ch[v[i]] = 1;
-        }
-        for (int i = 1; i <= n; i++) {
-            ch[i] += ch[i - 1];
-        }
-        for (int i = 0; i < n; i++) {
-            s[i] = ch[v[i]] - 1;
-        }
-        sigma = ch[n];
     }
 
     void sa_is(const vector<int> &S, int sig, vector<int> &SA) {
@@ -162,19 +133,23 @@ public:
         }
     }
 
-    void run(bool compute_lcp = true) {
-        sa_is(s, sigma, sa);
+    void run(const T &msc = numeric_limits<T>::min(),
+             const T &mxc = numeric_limits<T>::max(),
+             bool compute_lcp = true) {
+        init(msc, mxc);
+        sa_is(s_int, sigma, sa);
         if (compute_lcp) {
+            int n = static_cast<int>(s.size());
             lcp.resize(n - 1);
             vector<int> rnk(n);
             for (int i = 0; i < n; i++) {
                 rnk[sa[i]] = i;
             }
-            s.push_back(-1);
+            s_int.push_back(-1);
             for (int i = 0, j = 0; i < n; i++) {
                 int r = rnk[i];
                 if (r) {
-                    while (s[i + j] == s[sa[r - 1] + j]) {
+                    while (s_int[i + j] == s_int[sa[r - 1] + j]) {
                         j++;
                     }
                     lcp[r - 1] = j;
@@ -183,7 +158,7 @@ public:
                     }
                 }
             }
-            s.pop_back();
+            s_int.pop_back();
         }
     }
 };

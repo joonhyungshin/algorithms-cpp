@@ -1,11 +1,17 @@
 class dsu {
-private:
+public:
 	vector<int> par;
 	vector<int> sz;
 
-public:
 	dsu(int n_) : par(n_), sz(n_, 1) {
 		iota(par.begin(), par.end(), 0);
+	}
+
+	int add() {
+		int n = static_cast<int>(par.size());
+		par.push_back(n);
+		sz.push_back(1);
+		return n;
 	}
 
 	int find(int u) {

@@ -9,7 +9,14 @@ public:
     vector<typename Container::iterator> ptr;
     int s, t;
 
-    mcmf(flow_graph<F, T, Container> &g_) : g(g_), dist(g_.n), q(), inq(g_.n), vis(g_.n), ptr(g_.n) {}
+    mcmf(flow_graph<F, T, Container> &g_) : g(g_), dist(), q(), inq(), vis(), ptr() {}
+
+    void init() {
+        dist.resize(g.n);
+        inq.resize(g.n);
+        vis.resize(g.n);
+        ptr.resize(g.n);
+    }
 
     void spfa() {
         fill(dist.begin(), dist.end(), numeric_limits<T>::max());
@@ -59,6 +66,7 @@ public:
                    const F flow_ub = numeric_limits<F>::max()) {
         s = s_;
         t = t_;
+        init();
         F max_flow = static_cast<F>(0);
         T min_cost = static_cast<T>(0);
         while (max_flow < flow_ub) {
@@ -67,7 +75,7 @@ public:
                 || (!only_max_flow && max_flow >= flow_lb && dist[t] > static_cast<T>(0))) {
                 break;
             }
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < g.n; i++) {
                 ptr[i] = g.g[i].begin();
             }
             while (true) {
