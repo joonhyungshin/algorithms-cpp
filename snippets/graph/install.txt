@@ -1,0 +1,6 @@
+graph
+digraph
+undigraph
+dijkstra
+spfa
+
