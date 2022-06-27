@@ -66,10 +66,10 @@ public:
             }
             while (true) {
             	F f = dfs(s, numeric_limits<F>::max());
+                if (f == static_cast<F>(0)) {
+                    break;
+                }
             	res += f;
-            	if (f == static_cast<F>(0)) {
-            		break;
-            	}
             }
         }
         return res;
