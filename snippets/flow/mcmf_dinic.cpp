@@ -21,9 +21,9 @@ public:
     void spfa() {
         fill(dist.begin(), dist.end(), numeric_limits<T>::max());
         fill(inq.begin(), inq.end(), false);
-        dist[s] = static_cast<T>(0);
-        inq[s] = true;
-        q.push(s);
+        dist[t] = static_cast<T>(0);
+        inq[t] = true;
+        q.push(t);
         while (!q.empty()) {
             int node = q.front();
             q.pop();
@@ -31,8 +31,9 @@ public:
             T d = dist[node];
             for (int idx : g.g[node]) {
                 auto &e = g.edges[idx];
-                if (e.flow < e.cap && dist[e.to] > d + e.cost) {
-                    dist[e.to] = d + e.cost;
+                auto &re = g.edges[idx ^ 1];
+                if (re.flow < re.cap && dist[e.to] > d + re.cost) {
+                    dist[e.to] = d + re.cost;
                     if (!inq[e.to]) {
                         q.push(e.to);
                         inq[e.to] = true;
@@ -49,7 +50,7 @@ public:
         vis[node] = true;
         for (auto &it = ptr[node]; it != g.g[node].end(); it = next(it)) {
             auto &e = g.edges[*it];
-            if (e.flow < e.cap && !vis[e.to] && dist[e.to] == dist[node] + e.cost) {
+            if (e.flow < e.cap && !vis[e.to] && dist[e.to] == dist[node] - e.cost) {
                 F f = dfs(e.to, min(cap_so_far, e.cap - e.flow));
                 if (f > static_cast<F>(0)) {
                     e.flow += f;
@@ -71,8 +72,8 @@ public:
         T min_cost = static_cast<T>(0);
         while (max_flow < flow_ub) {
             spfa();
-            if (dist[t] == numeric_limits<T>::max()
-                || (!only_max_flow && max_flow >= flow_lb && dist[t] > static_cast<T>(0))) {
+            if (dist[s] == numeric_limits<T>::max()
+                || (!only_max_flow && max_flow >= flow_lb && dist[s] > static_cast<T>(0))) {
                 break;
             }
             for (int i = 0; i < g.n; i++) {
@@ -82,7 +83,7 @@ public:
                 fill(vis.begin(), vis.end(), false);
                 F f = dfs(s, flow_ub - max_flow);
                 max_flow += f;
-                min_cost += dist[t] * f;
+                min_cost += dist[s] * f;
                 if (f == static_cast<F>(0) || max_flow == flow_ub) {
                     break;
                 }
