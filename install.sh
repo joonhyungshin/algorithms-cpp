@@ -23,6 +23,7 @@ EOT
 	<scope>source.c++</scope>
 </snippet>
 EOT
+			echo "collected $code"
 		fi
 	done
 done
