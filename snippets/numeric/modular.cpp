@@ -157,7 +157,7 @@ ostream &operator<<(ostream &stream, const modular<W> &n) {
 
 template<class W>
 istream &operator>>(istream &stream, modular<W> &n) {
-    typename common_type<typename modular<W>::value_type, uint64_t>::type x;
+    typename common_type<typename modular<W>::value_type, int64_t>::type x;
     stream >> x;
     n.value = modular<W>::norm(x);
     return stream;
