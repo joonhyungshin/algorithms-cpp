@@ -4,7 +4,8 @@ public:
     int n;
     vector<vector<T>> cost;
     vector<T> rlabel, clabel;
-    vector<T> slack, rslack;
+    vector<T> slack;
+    vector<int> rslack;
     vector<int> rmatch, cmatch;
     vector<bool> s, t;
     vector<int> prv, q;
