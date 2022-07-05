@@ -42,15 +42,15 @@ public:
         if (node == t) {
             return cap_so_far;
         }
-        for (auto &it = state[node]; it != g.g[node].end(); it = next(it)) {
+        for (auto &it = state[node]; it != g.g[node].end(); ++it) {
             auto &e = g.edges[*it];
             if (e.cap - e.flow > eps && dist[e.to] == dist[node] - 1) {
                 F f = dfs(e.to, min(cap_so_far, e.cap - e.flow));
                 if (f > eps) {
-	                e.flow += f;
-	                g.edges[*it ^ 1].flow -= f;
-	                return f;
-	            }
+                    e.flow += f;
+                    g.edges[*it ^ 1].flow -= f;
+                    return f;
+                }
             }
         }
         return static_cast<F>(0);

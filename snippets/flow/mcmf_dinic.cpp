@@ -32,13 +32,12 @@ public:
             inq[node] = false;
             T d = dist[node];
             for (int idx : g.g[node]) {
-                auto &e = g.edges[idx];
                 auto &re = g.edges[idx ^ 1];
-                if (re.cap - re.flow > eps && dist[e.to] > d + re.cost) {
-                    dist[e.to] = d + re.cost;
-                    if (!inq[e.to]) {
-                        q.push(e.to);
-                        inq[e.to] = true;
+                if (re.cap - re.flow > eps && dist[re.from] > d + re.cost) {
+                    dist[re.from] = d + re.cost;
+                    if (!inq[re.from]) {
+                        q.push(re.from);
+                        inq[re.from] = true;
                     }
                 }
             }
@@ -50,7 +49,7 @@ public:
             return cap_so_far;
         }
         vis[node] = true;
-        for (auto &it = ptr[node]; it != g.g[node].end(); it = next(it)) {
+        for (auto &it = ptr[node]; it != g.g[node].end(); ++it) {
             auto &e = g.edges[*it];
             if (e.cap - e.flow > eps && !vis[e.to] && dist[e.to] == dist[node] - e.cost) {
                 F f = dfs(e.to, min(cap_so_far, e.cap - e.flow));
