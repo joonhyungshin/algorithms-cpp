@@ -7,6 +7,8 @@ public:
     vector<typename Container::iterator> state;
     int s, t;
 
+    static constexpr F eps = static_cast<F>(1e-9);
+
     dinic(flow_graph<F, T, Container> &g_) : g(g_), dist(), q(), state() {}
 
     void init() {
@@ -23,14 +25,13 @@ public:
         while (l < r) {
             int node = q[l++];
             for (int idx : g.g[node]) {
-                auto &e = g.edges[idx];
                 auto &re = g.edges[idx ^ 1];
-                if (re.flow < re.cap && dist[e.to] == -1) {
-                    dist[e.to] = dist[node] + 1;
-                    if (e.to == s) {
+                if (re.cap - re.flow > eps && dist[re.from] == -1) {
+                    dist[re.from] = dist[node] + 1;
+                    if (re.from == s) {
                     	return true;
                     }
-                    q[r++] = e.to;
+                    q[r++] = re.from;
                 }
             }
         }
@@ -43,9 +44,9 @@ public:
         }
         for (auto &it = state[node]; it != g.g[node].end(); it = next(it)) {
             auto &e = g.edges[*it];
-            if (e.flow < e.cap && dist[e.to] == dist[node] - 1) {
+            if (e.cap - e.flow > eps && dist[e.to] == dist[node] - 1) {
                 F f = dfs(e.to, min(cap_so_far, e.cap - e.flow));
-                if (f > 0) {
+                if (f > eps) {
 	                e.flow += f;
 	                g.edges[*it ^ 1].flow -= f;
 	                return f;
@@ -66,7 +67,7 @@ public:
             }
             while (true) {
             	F f = dfs(s, numeric_limits<F>::max());
-                if (f == static_cast<F>(0)) {
+                if (f <= eps) {
                     break;
                 }
             	res += f;

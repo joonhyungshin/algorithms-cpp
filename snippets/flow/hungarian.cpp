@@ -11,6 +11,8 @@ public:
     vector<int> prv, q;
     int max_match;
 
+    static constexpr T eps = static_cast<T>(1e-9);
+
     hungarian(int n_) : n(n_), cost(n, vector<T>(n)),
         rlabel(n), clabel(n),
         slack(n), rslack(n),
@@ -91,7 +93,7 @@ public:
             while (rd < wr) {
                 i = q[rd++];
                 for (j = 0; j < n; j++) {
-                    if (cost[i][j] == rlabel[i] + clabel[j] && !t[j]) {
+                    if (rlabel[i] + clabel[j] - cost[i][j] <= eps && !t[j]) {
                         if (cmatch[j] == -1) {
                             break;
                         }
@@ -110,7 +112,7 @@ public:
             update();
             wr = rd = 0;
             for (j = 0; j < n; j++) {
-                if (!t[j] && slack[j] == 0) {
+                if (!t[j] && slack[j] <= eps) {
                     if (cmatch[j] == -1) {
                         i = rslack[j];
                         break;

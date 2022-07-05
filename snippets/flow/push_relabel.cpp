@@ -8,6 +8,8 @@ public:
     int high, cut, work, gp;
     int s, t;
 
+    static constexpr F eps = static_cast<F>(1e-9);
+
     push_relabel(flow_graph<F, T, Args...> &g_, int gp_ = 4) : g(g_),
         extra(),
         hei(), arc(),
@@ -29,7 +31,7 @@ public:
     void relabel(int v, int h) {
         prv[nxt[prv[v]] = nxt[v]] = prv[v];
         hei[v] = h;
-        if (extra[v] > 0) {
+        if (extra[v] > eps) {
             bot[v] = act[h];
             act[h] = v;
             high = max(high, h);
@@ -57,7 +59,7 @@ public:
                 for (int idx : g.g[v]) {
                     auto &e = g.edges[idx];
                     auto &re = g.edges[idx ^ 1];
-                    if (hei[e.to] == n * 2 && re.flow < re.cap) {
+                    if (hei[e.to] == n * 2 && re.cap - re.flow > eps) {
                         q.push(e.to);
                         relabel(e.to, hei[v] + 1);
                     }
@@ -69,9 +71,9 @@ public:
     void push(int v, int idx, bool z) {
         auto &e = g.edges[idx];
         auto &re = g.edges[idx ^ 1];
-        auto f = min(extra[v], e.cap - e.flow);
-        if (f > 0) {
-            if (z && !extra[e.to]) {
+        F f = min(extra[v], e.cap - e.flow);
+        if (f > eps) {
+            if (z && extra[e.to] <= eps) {
                 bot[e.to] = act[hei[e.to]];
                 act[hei[e.to]] = e.to;
             }
@@ -88,10 +90,10 @@ public:
         for(int j = 0; j < static_cast<int>(g.g[v].size()); j++) {
             int idx = g.g[v][arc[v]];
             auto& e = g.edges[idx];
-            if (e.flow < e.cap) {
+            if (e.cap - e.flow > eps) {
                 if (k == hei[e.to] + 1) {
                     push(v, idx, 1);
-                    if (extra[v] <= 0) {
+                    if (extra[v] <= eps) {
                         return;
                     }
                 } else {

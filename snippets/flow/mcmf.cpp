@@ -8,6 +8,8 @@ public:
     vector<bool> inq;
     int s, t;
 
+    static constexpr F eps = static_cast<F>(1e-9);
+
     mcmf(flow_graph<F, T, Args...> &g_) : g(g_), dist(), bck(), q(), inq() {}
 
     void init() {
@@ -24,7 +26,7 @@ public:
         init();
         F max_flow = static_cast<F>(0);
         T min_cost = static_cast<T>(0);
-        while (max_flow < flow_ub) {
+        while (flow_ub - max_flow > eps) {
             fill(dist.begin(), dist.end(), numeric_limits<T>::max());
             fill(inq.begin(), inq.end(), false);
             dist[s] = static_cast<T>(0);
@@ -37,7 +39,7 @@ public:
                 T d = dist[node];
                 for (int idx : g.g[node]) {
                     auto &e = g.edges[idx];
-                    if (e.flow < e.cap && dist[e.to] > d + e.cost) {
+                    if (e.cap - e.flow > eps && dist[e.to] > d + e.cost) {
                         dist[e.to] = d + e.cost;
                         bck[e.to] = idx;
                         if (!inq[e.to]) {

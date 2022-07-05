@@ -9,6 +9,8 @@ public:
     vector<typename Container::iterator> ptr;
     int s, t;
 
+    static constexpr F eps = static_cast<F>(1e-9);
+
     mcmf(flow_graph<F, T, Container> &g_) : g(g_), dist(), q(), inq(), vis(), ptr() {}
 
     void init() {
@@ -32,7 +34,7 @@ public:
             for (int idx : g.g[node]) {
                 auto &e = g.edges[idx];
                 auto &re = g.edges[idx ^ 1];
-                if (re.flow < re.cap && dist[e.to] > d + re.cost) {
+                if (re.cap - re.flow > eps && dist[e.to] > d + re.cost) {
                     dist[e.to] = d + re.cost;
                     if (!inq[e.to]) {
                         q.push(e.to);
@@ -50,9 +52,9 @@ public:
         vis[node] = true;
         for (auto &it = ptr[node]; it != g.g[node].end(); it = next(it)) {
             auto &e = g.edges[*it];
-            if (e.flow < e.cap && !vis[e.to] && dist[e.to] == dist[node] - e.cost) {
+            if (e.cap - e.flow > eps && !vis[e.to] && dist[e.to] == dist[node] - e.cost) {
                 F f = dfs(e.to, min(cap_so_far, e.cap - e.flow));
-                if (f > static_cast<F>(0)) {
+                if (f > eps) {
                     e.flow += f;
                     g.edges[*it ^ 1].flow -= f;
                     return f;
@@ -70,7 +72,7 @@ public:
         init();
         F max_flow = static_cast<F>(0);
         T min_cost = static_cast<T>(0);
-        while (max_flow < flow_ub) {
+        while (flow_ub - max_flow > eps) {
             spfa();
             if (dist[s] == numeric_limits<T>::max()
                 || (!only_max_flow && max_flow >= flow_lb && dist[s] > static_cast<T>(0))) {
@@ -84,7 +86,7 @@ public:
                 F f = dfs(s, flow_ub - max_flow);
                 max_flow += f;
                 min_cost += dist[s] * f;
-                if (f == static_cast<F>(0) || max_flow == flow_ub) {
+                if (f <= eps || flow_ub - max_flow <= eps) {
                     break;
                 }
             }
