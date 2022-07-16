@@ -7,13 +7,6 @@ public:
 		iota(par.begin(), par.end(), 0);
 	}
 
-	int add() {
-		int n = static_cast<int>(par.size());
-		par.push_back(n);
-		sz.push_back(1);
-		return n;
-	}
-
 	int find(int u) {
 		return u == par[u] ? u : par[u] = find(par[u]);
 	}

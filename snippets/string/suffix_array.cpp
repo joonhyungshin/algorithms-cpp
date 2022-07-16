@@ -7,10 +7,11 @@ public:
     vector<int> aux;
     vector<int> sa;
     vector<int> ptr;
+    vector<int> ord;
     vector<int> lcp;
     int sigma;
 
-    suffix_array(String &s_) : s(s_), s_int(), aux(), sa(), ptr(), lcp() {}
+    suffix_array(String &s_) : s(s_), s_int(), aux(), sa(), ptr(), ord(), lcp() {}
 
     void init(const T &msc, const T &mxc) {
         int n = static_cast<int>(s.size());
@@ -140,14 +141,14 @@ public:
         sa_is(s_int, sigma, sa);
         if (compute_lcp) {
             int n = static_cast<int>(s.size());
+            ord.resize(n);
             lcp.resize(n - 1);
-            vector<int> rnk(n);
             for (int i = 0; i < n; i++) {
-                rnk[sa[i]] = i;
+                ord[sa[i]] = i;
             }
             s_int.push_back(-1);
             for (int i = 0, j = 0; i < n; i++) {
-                int r = rnk[i];
+                int r = ord[i];
                 if (r) {
                     while (s_int[i + j] == s_int[sa[r - 1] + j]) {
                         j++;
