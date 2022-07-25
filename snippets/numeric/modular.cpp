@@ -140,7 +140,7 @@ public:
     T operator()() const { return value; }
 
     template<class W>
-    friend istream &operator>>(istream &stream, modular<W> &n);
+    friend istream &operator>>(istream &in, modular<W> &n);
 };
 
 template<class V, class W> modular<W> operator+(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) + rhs; }
@@ -151,14 +151,14 @@ template<class V, class W> bool operator==(const V &lhs, const modular<W> &rhs) 
 template<class V, class W> bool operator!=(const V &lhs, const modular<W> &rhs) { return modular<W>(lhs) != rhs; }
 
 template<class W>
-ostream &operator<<(ostream &stream, const modular<W> &n) {
-    return stream << n();
+ostream &operator<<(ostream &out, const modular<W> &n) {
+    return out << n();
 }
 
 template<class W>
-istream &operator>>(istream &stream, modular<W> &n) {
+istream &operator>>(istream &in, modular<W> &n) {
     typename common_type<typename modular<W>::value_type, int64_t>::type x;
-    stream >> x;
+    in >> x;
     n.value = modular<W>::norm(x);
-    return stream;
+    return in;
 }
