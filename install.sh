@@ -33,7 +33,7 @@ done
 
 echo "snippets collected to $BUILD_DIR"
 
-SUBLIME_PATH="$HOME/Library/Application Support/Sublime Text 3/Packages/User"
+SUBLIME_PATH="$HOME/Library/Application Support/Sublime Text/Packages/User"
 SNIPPET_DIR=algorithms-cpp
 if [ -d "$SUBLIME_PATH" ]
 then
