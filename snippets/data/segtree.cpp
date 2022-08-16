@@ -51,7 +51,7 @@ public:
             if (s > y) {
                 res = get(z, y + 1, r, s, e);
             } else {
-                res.pull(get(x + 1, l, y, s, e), get(z, y + 1, r, s, e));
+                res.pull(max(l, s), min(r, e), get(x + 1, l, y, s, e), get(z, y + 1, r, s, e));
             }
         }
         tree[x].pull(l, r, tree[x + 1], tree[z]);
